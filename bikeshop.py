@@ -16,26 +16,19 @@ class Component:
 class Bell(Component):
     def ring_the_bell(self):
         if self.current_state != 0:
-            self.current_state -= 1
-            return "ring ring -1"
+            self.current_state -= 50
 class Brake(Component):
     def press_the_brakes(self):
         if self.current_state !=0:
-            self.current_state -=1
-            return "gigggggg!!! -1"
+            self.current_state -=50
 class Chain(Component):
     def ching_chain(self):
         if self.current_state != 0:
-            self.current_state -= 1
-            return "ching ching -1"
+            self.current_state -= 50
 class Tyres(Component):
     def run_run_tyres(self):
         if self.current_state != 0:
-            self.current_state -= 1
-            return "bump bump -1"
-
-    
-
+            self.current_state -= 50
 
 class Bike():
     def __init__(self, bell, brake, chain, tyres):
@@ -45,18 +38,15 @@ class Bike():
         self.tyres = tyres
     
     def ride(self):
-        # self.bell.ring_the_bell()
-        # self.brake.press_the_brakes()
-        # self.chain.ching_chain()
-        # self.tyres.run_run_tyres()
-        
         print('bell',self.bell.current_state, 'brake', self.brake.current_state, 'chain', self.chain.current_state, 'tyres', self.tyres.current_state)
 
-        if all(component.max_lifespan *0.7 <= component.current_state <= component.max_lifespan for component in [self.bell, self.brake, self.chain, self.tyres]):
+        components = [self.bell, self.brake, self.chain, self.tyres]
+
+        if all(component.max_lifespan *0.7 <= component.current_state <= component.max_lifespan for component in components):
             return "Perfect condition. Good to go!."
-        elif all(component.max_lifespan *0.3 <= component.current_state < component.max_lifespan *0.7 for component in [self.bell, self.brake, self.chain, self.tyres]):
+        elif all(component.max_lifespan *0.3 <= component.current_state < component.max_lifespan *0.7 for component in components):
             return "Good condition. safe drive!."
-        elif (1 <= component.current_state < component.max_lifespan *0.3 for component in [self.bell, self.brake, self.chain, self.tyres]):
+        elif (1 <= component.current_state < component.max_lifespan *0.3 for component in components):
             return "Warning, Your bike needs repair. Please go to service centre."
 
     def ring_bell(self):
@@ -94,16 +84,16 @@ class BMX(Bike):
             return self.tyres.current_state
 
     def ride(self):
-    
-        print('bell',self.bell.current_state, 'chain', self.chain.current_state, 'tyres', self.tyres.current_state)
+        print('bell',self.bell.current_state,'chain', self.chain.current_state, 'tyres', self.tyres.current_state)
 
-        if all(component.max_lifespan *0.7 <= component.current_state <= component.max_lifespan for component in [self.bell, self.chain, self.tyres]):
+        components = [self.bell, self.chain, self.tyres]
+
+        if all(component.max_lifespan *0.7 <= component.current_state <= component.max_lifespan for component in components):
             return "Perfect condition. Good to go!."
-        elif all(component.max_lifespan *0.3 <= component.current_state < component.max_lifespan *0.7 for component in [self.bell,  self.chain, self.tyres]):
+        elif all(component.max_lifespan *0.3 <= component.current_state < component.max_lifespan *0.7 for component in components):
             return "Good condition. safe drive!."
-        elif (1 <= component.current_state < component.max_lifespan *0.3 for component in [self.bell, self.chain, self.tyres]):
-            return "Warning, Your bike needs repair. Please go to service centre."    
-    
+        elif (1 <= component.current_state < component.max_lifespan *0.3 for component in components):
+            return "Warning, Your bike needs repair. Please go to service centre."
 
 class Mountain(Bike):
     def __init__(self, bell, brake, chain, tyres):
@@ -112,14 +102,35 @@ class Mountain(Bike):
     def ching_chain(self):
         if self.chain.current_state != 0:
             self.chain.current_state -= 0.85
-            return self.chain.current_state    
+            return self.chain.current_state
+
+class Street(Bike):
+    def __init__(self, bell, brake, chain, tyres):
+        super().__init__(bell, brake, chain, tyres)    
+
+    def press_the_brakes(self):
+        if self.brake.current_state !=0:
+            self.brake.current_state -=1+(5/100)
+            return self.brake.current_state
+        
+class Service_person:
+    def order_parts(self,bike):
+        components = [bike.bell, bike.brake, bike.chain, bike.tyres]
+
+        for component in components:
+            if component.check_condition() == "Broken":
+                component.current_state = component.max_lifespan
+                print(component.current_state)
+        
+            
 
 a=Bell(100,100)
 b=Brake(100,100)
 c=Chain(100,100)
 d=Tyres(100,100)
 
-ford = Mountain(a,b,c,d)
+
+
 
 # Bike
 # ford.bell.ring_the_bell()
@@ -138,11 +149,25 @@ ford = Mountain(a,b,c,d)
 # ford.chain.ching_chain()
 # ford.run_run_tyres()
 
-#Mountain
+# #Mountain
+# ford.bell.ring_the_bell()
+# ford.brake.press_the_brakes()
+# ford.ching_chain()
+# ford.tyres.run_run_tyres()
+ford = Street(a,b,c,d)
+#Street
 ford.bell.ring_the_bell()
-ford.brake.press_the_brakes()
-ford.ching_chain()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
 ford.tyres.run_run_tyres()
 
-ford.ride()
+print(ford.ride())
+
+joe=Service_person()
+joe.order_parts(ford)
+print(ford.ride())
 
