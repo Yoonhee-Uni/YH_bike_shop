@@ -6,7 +6,7 @@ class Component:
     def check_condition(self):
         if self.max_lifespan*0.7 < self.current_state <= self.max_lifespan:
             return "Pristine"
-        elif self.max_lifespan*0.3 < self.current_state < self.max_lifespan*0.7:
+        elif self.max_lifespan*0.3 < self.current_state < self.max_lifespan:
             return "Good"
         elif  0 < self.current_state < self.max_lifespan*0.3:
             return "Fragile"
@@ -16,19 +16,27 @@ class Component:
 class Bell(Component):
     def ring_the_bell(self):
         if self.current_state != 0:
-            self.current_state -= 50
+            self.current_state -= 1
+        if self.current_state < 0:
+            self.current_state = 0
 class Brake(Component):
     def press_the_brakes(self):
         if self.current_state !=0:
-            self.current_state -=50
+            self.current_state -=1
+        if self.current_state < 0:
+            self.current_state = 0
 class Chain(Component):
     def ching_chain(self):
         if self.current_state != 0:
-            self.current_state -= 50
+            self.current_state -= 1
+        if self.current_state < 0:
+            self.current_state = 0
 class Tyres(Component):
     def run_run_tyres(self):
         if self.current_state != 0:
-            self.current_state -= 50
+            self.current_state -= 1
+        if self.current_state < 0:
+            self.current_state = 0
 
 class Bike():
     def __init__(self, bell, brake, chain, tyres):
@@ -43,11 +51,11 @@ class Bike():
         components = [self.bell, self.brake, self.chain, self.tyres]
 
         if all(component.max_lifespan *0.7 <= component.current_state <= component.max_lifespan for component in components):
-            return "Perfect condition. Good to go!."
-        elif all(component.max_lifespan *0.3 <= component.current_state < component.max_lifespan *0.7 for component in components):
-            return "Good condition. safe drive!."
+            print( "Perfect condition. Good to go!.")
+        elif all(component.max_lifespan *0.3 <= component.current_state < component.max_lifespan  for component in components):
+            print( "Good condition. safe drive!.")
         elif (1 <= component.current_state < component.max_lifespan *0.3 for component in components):
-            return "Warning, Your bike needs repair. Please go to service centre."
+            print( "Warning, Your bike needs repair. Please go to service centre.")
 
     def ring_bell(self):
         
@@ -56,9 +64,9 @@ class Bike():
         else:
             for component in [self.bell, self.brake, self.chain, self.tyres] :
                 if (component.check_condition() == "Broken") :
-                    return "The ring fell off!"
+                    print( "The ring fell off!")
                 elif (component.check_condition() == "Fragile") :
-                    return "Ring! cling..."
+                    print("Ring! cling...")
 
 class Racing(Bike):
     def __init__(self, bell, brake, chain, tyres):
@@ -67,12 +75,14 @@ class Racing(Bike):
     def run_run_tyres(self):
         if self.tyres.current_state != 0:
             self.tyres.current_state -= 1+(5/100)
-            return self.tyres.current_state
+        if self.tyres.current_state < 0:
+            self.tyres.current_state =0
         
     def ching_chain(self):
         if self.chain.current_state != 0:
             self.chain.current_state -= 1+(5/100)
-            return self.chain.current_state
+        if self.chain.current_state < 0:
+            self.chain.current_state = 0
 
 class BMX(Bike):
     def __init__(self, bell, chain, tyres):
@@ -81,7 +91,8 @@ class BMX(Bike):
     def run_run_tyres(self):
         if self.tyres.current_state != 0:
             self.tyres.current_state -= 1+(15/100)
-            return self.tyres.current_state
+        if self.tyres.current_state < 0:
+            self.tyres.current_state = 0
 
     def ride(self):
         print('bell',self.bell.current_state,'chain', self.chain.current_state, 'tyres', self.tyres.current_state)
@@ -89,11 +100,11 @@ class BMX(Bike):
         components = [self.bell, self.chain, self.tyres]
 
         if all(component.max_lifespan *0.7 <= component.current_state <= component.max_lifespan for component in components):
-            return "Perfect condition. Good to go!."
+            print( "Perfect condition. Good to go!.")
         elif all(component.max_lifespan *0.3 <= component.current_state < component.max_lifespan *0.7 for component in components):
-            return "Good condition. safe drive!."
+            print( "Good condition. safe drive!.")
         elif (1 <= component.current_state < component.max_lifespan *0.3 for component in components):
-            return "Warning, Your bike needs repair. Please go to service centre."
+            print( "Warning, Your bike needs repair. Please go to service centre.")
 
 class Mountain(Bike):
     def __init__(self, bell, brake, chain, tyres):
@@ -102,7 +113,8 @@ class Mountain(Bike):
     def ching_chain(self):
         if self.chain.current_state != 0:
             self.chain.current_state -= 0.85
-            return self.chain.current_state
+        if self.chain.current_state < 0:
+            self.chain.current_state = 0
 
 class Street(Bike):
     def __init__(self, bell, brake, chain, tyres):
@@ -111,23 +123,73 @@ class Street(Bike):
     def press_the_brakes(self):
         if self.brake.current_state !=0:
             self.brake.current_state -=1+(5/100)
-            return self.brake.current_state
+        if self.brake.current_state < 0:
+            self.brake.current_state = 0
         
 class Service_person:
-    def order_parts(self,bike):
+    def order_parts(self, bike):
         components = [bike.bell, bike.brake, bike.chain, bike.tyres]
 
         for component in components:
             if component.check_condition() == "Broken":
                 component.current_state = component.max_lifespan
-                print(component.current_state)
-        
-            
+                
 
-a=Bell(100,100)
-b=Brake(100,100)
-c=Chain(100,100)
-d=Tyres(100,100)
+    def service_parts(self, bike):
+        components = [bike.bell, bike.brake, bike.chain, bike.tyres]
+
+        for component in components:
+            if component.check_condition() == "Fragile":
+                component.current_state = component.max_lifespan*0.7     
+
+    def oil(self, bike):
+        components = [bike.brake, bike.chain, bike.tyres]
+
+        for component in components:
+            if component.check_condition() == "Good":
+                component.current_state = component.max_lifespan    
+
+    def pump_wheels(self, bike):
+        components = [bike.tyres]
+
+        for component in components:
+            if component.check_condition() == "Good":
+                component.current_state = component.max_lifespan
+
+    def service_bike(self, bike):
+        self.service_parts(bike)
+        self.oil(bike)
+        self.pump_wheels(bike)
+
+    def check_safety(self, bike):
+        components = [bike.bell, bike.brake]
+
+        if all(component.check_condition() == "Fragile" or component.check_condition() == "Broken" for component in components):
+                print("You have failed safety check.")
+        else: print("You have passed safety check.")    
+    
+    def check_up(self, bike):
+        components = [bike.bell, bike.brake, bike.chain, bike.tyres]
+
+        for component in components:
+            if component.check_condition() == "Broken":
+                self.order_parts(bike)
+            elif component.check_condition() == "Fragile":
+                self.service_parts(bike)
+            elif component.check_condition() == "Pristine" or component.check_condition() == "Good":
+                self.service_bike(bike)
+
+        print(self.check_safety(bike))    
+        print(bike.ride())
+
+
+
+
+
+a=Bell(70,100)
+b=Brake(70,100)
+c=Chain(70,100)
+d=Tyres(70,100)
 
 
 
@@ -154,6 +216,7 @@ d=Tyres(100,100)
 # ford.brake.press_the_brakes()
 # ford.ching_chain()
 # ford.tyres.run_run_tyres()
+
 ford = Street(a,b,c,d)
 #Street
 ford.bell.ring_the_bell()
@@ -164,10 +227,287 @@ ford.bell.ring_the_bell()
 ford.press_the_brakes()
 ford.chain.ching_chain()
 ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
 
-print(ford.ride())
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
+ford.bell.ring_the_bell()
+ford.press_the_brakes()
+ford.chain.ching_chain()
+ford.tyres.run_run_tyres()
 
-joe=Service_person()
-joe.order_parts(ford)
-print(ford.ride())
+
+
+
+ford.ride()
+joe = Service_person()
+
+joe.check_up(ford)
+joe.check_safety(ford)
+# print(ford.ride())
+
+# ford.ride()
+
+
+
+
+
+
 
